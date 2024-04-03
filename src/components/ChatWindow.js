@@ -31,6 +31,7 @@ function ChatWindow() {
 
       // Call API & set assistant message
       const newMessage = await getAIMessage(input);
+      console.log(newMessage);
       setMessages(prevMessages => [...prevMessages, newMessage]);
     }
   };
