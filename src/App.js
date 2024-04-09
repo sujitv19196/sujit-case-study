@@ -7,7 +7,7 @@ function App() {
   return (
     <div className="App">
       <div className="heading">
-        Instalily Case Study
+        Ask me about PartSelect.com!
       </div>
         <ChatWindow/>
     </div>
