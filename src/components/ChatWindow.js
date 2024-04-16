@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./ChatWindow.css";
-import { getAIMessage } from "../api/api";
+import { getAIMessage, sendAudioMessage } from "../api/api";
 import { marked } from "marked";
+import { Divider } from "antd";
+import { con, startRecording, stopRecording, playAudio } from "./audio/AudioRecorder";
 
 function ChatWindow() {
-
+  
   const defaultMessage = [{
     role: "assistant",
     content: "Hi, how can I help you today?"
@@ -12,7 +14,9 @@ function ChatWindow() {
 
   const [messages,setMessages] = useState(defaultMessage)
   const [input, setInput] = useState("");
-
+  const [recording, setRecording] = useState(false); 
+  const [loading, setLoading] = useState(false);
+  const [connected, setConnected] = useState(false); 
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -33,6 +37,28 @@ function ChatWindow() {
       const newMessage = await getAIMessage(input);
       console.log(newMessage);
       setMessages(prevMessages => [...prevMessages, newMessage]);
+    }
+  };
+
+  const toggleRecording = async () => {
+    if (!recording) {
+      if (!connected) {
+        await con();
+        setConnected(true);
+        console.log("Connected");
+      }
+
+      startRecording();
+      setRecording(true); // Update recording state to true
+    } else {
+      setLoading(true);
+      const wavAudioBlob = await stopRecording();
+      // playAudio(wavAudioBlob);
+      const newMessage = await sendAudioMessage(wavAudioBlob);
+      console.log(newMessage);
+      setMessages(prevMessages => [...prevMessages, newMessage]);
+      setLoading(false);
+      setRecording(false); // Update recording state to false
     }
   };
 
@@ -63,6 +89,9 @@ function ChatWindow() {
             />
             <button className="send-button" onClick={handleSend}>
               Send
+            </button>
+            <button className="audio-button" onClick={toggleRecording} disabled={loading}>
+              {recording ? "Stop" : "Start"}
             </button>
           </div>
       </div>

@@ -11,6 +11,9 @@
     "antd": "^5.12.1",
     "chrome": "^0.1.0",
     "date-fns": "^2.30.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "extendable-media-recorder": "^9.2.0",
+    "extendable-media-recorder-wav-encoder": "^7.0.109",
     "framer-motion": "^10.16.4",
     "fs": "^0.0.1-security",
     "langchain": "^0.0.143",
@@ -36,7 +39,10 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "jsx-a11y/": "off"
+    }
   },
   "browserslist": {
     "production": [
