@@ -32,10 +32,6 @@ export const sendAudioMessage = async (audioBlob) => {
   });
 
   const data = await response.json();
-  const message = {
-    role: "assistant",
-    content: data.message,
-  };
   
-  return message;
+  return data;
 };

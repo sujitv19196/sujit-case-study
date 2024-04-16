@@ -5,6 +5,8 @@ import { marked } from "marked";
 import { Divider } from "antd";
 import { con, startRecording, stopRecording, playAudio } from "./audio/AudioRecorder";
 
+import { useSpeechSynthesis } from 'react-speech-kit';
+
 function ChatWindow() {
   
   const defaultMessage = [{
@@ -18,6 +20,8 @@ function ChatWindow() {
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState(false); 
   const messagesEndRef = useRef(null);
+
+  const { speak, cancel, speaking } = useSpeechSynthesis();
 
   const scrollToBottom = () => {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -56,7 +60,9 @@ function ChatWindow() {
       // playAudio(wavAudioBlob);
       const newMessage = await sendAudioMessage(wavAudioBlob);
       console.log(newMessage);
-      setMessages(prevMessages => [...prevMessages, newMessage]);
+      setMessages(prevMessages => [...prevMessages, { role: "user", content: newMessage.query }]);
+      setMessages(prevMessages => [...prevMessages, {role: "assistant", content: newMessage.message}]);
+      speak({ text: newMessage.message, rate: 1.5 }) // speak out loud 
       setLoading(false);
       setRecording(false); // Update recording state to false
     }
@@ -91,8 +97,13 @@ function ChatWindow() {
               Send
             </button>
             <button className="audio-button" onClick={toggleRecording} disabled={loading}>
-              {recording ? "Stop" : "Start"}
+              {recording ? "Stop Recording" : "Start Recording"}
             </button>
+            {speaking && (
+              <button type="button" onClick={cancel}>
+                Stop Speaking
+              </button>
+            )}
           </div>
       </div>
 );
